@@ -1,8 +1,10 @@
 import type { InferUITools, UIDataTypes, UIMessage } from "ai";
-import type { musicTools } from "../tools/MusicTools";
+import type { createMusicTools } from "../tools/MusicTools";
 
-export type ChatMessage = UIMessage<unknown, UIDataTypes, InferUITools<typeof musicTools>>;
+type MusicTools = ReturnType<typeof createMusicTools>;
+
+export type ChatMessage = UIMessage<unknown, UIDataTypes, InferUITools<MusicTools>>;
 
 export type ChatPart = ChatMessage["parts"][number];
 
-export type MusicToolPart = Extract<ChatPart, { type: `tool-${keyof typeof musicTools}` }>;
+export type MusicToolPart = Extract<ChatPart, { type: `tool-${keyof MusicTools}` }>;

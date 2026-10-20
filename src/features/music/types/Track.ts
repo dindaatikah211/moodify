@@ -3,6 +3,11 @@ export type SeedTrack = {
   artist: string;
 };
 
+export type SeedQuery = {
+  title: string;
+  artist?: string;
+};
+
 export type TrackLinks = {
   spotify: string;
   youtubeMusic: string;

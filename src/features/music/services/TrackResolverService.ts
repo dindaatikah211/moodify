@@ -1,6 +1,12 @@
-import type { Track, SeedTrack } from "../types/Track";
+import { RESOLVE_CHUNK_SIZE } from "../constants/Music";
+import type { SeedQuery, Track } from "../types/Track";
 import { findDeezerTrack, type DeezerTrack } from "./DeezerService";
 import { buildTrackLinks } from "./TrackLinkService";
+
+type ResolveOptions = {
+  limit: number;
+  excludeIds: ReadonlySet<string>;
+};
 
 const toTrack = (match: DeezerTrack): Track => ({
   id: String(match.id),
@@ -13,12 +19,27 @@ const toTrack = (match: DeezerTrack): Track => ({
 
 const isPresent = <T>(value: T | null): value is T => value !== null;
 
-const uniqueById = (tracks: Track[]) => [...new Map(tracks.map((track) => [track.id, track])).values()];
-
-export async function resolveTracks(seeds: SeedTrack[]): Promise<Track[]> {
+async function resolveChunk(seeds: SeedQuery[]): Promise<Track[]> {
   const matches = await Promise.all(
     seeds.map((seed) => findDeezerTrack(seed).catch(() => null)),
   );
 
-  return uniqueById(matches.filter(isPresent).map(toTrack));
+  return matches.filter(isPresent).map(toTrack);
+}
+
+export async function resolveTracks(
+  seeds: SeedQuery[],
+  { limit, excludeIds }: ResolveOptions,
+): Promise<Track[]> {
+  const collected = new Map<string, Track>();
+
+  for (let start = 0; start < seeds.length && collected.size < limit; start += RESOLVE_CHUNK_SIZE) {
+    const tracks = await resolveChunk(seeds.slice(start, start + RESOLVE_CHUNK_SIZE));
+
+    tracks
+      .filter((track) => !excludeIds.has(track.id))
+      .forEach((track) => collected.set(track.id, track));
+  }
+
+  return [...collected.values()].slice(0, limit);
 }

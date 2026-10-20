@@ -4,10 +4,11 @@ import {
   isStepCount,
   streamText,
   toUIMessageStream,
-  type UIMessage,
 } from "ai";
 import { SYSTEM_PROMPT } from "@/features/chat/constants/SystemPrompt";
-import { musicTools } from "@/features/chat/tools/MusicTools";
+import { createMusicTools } from "@/features/chat/tools/MusicTools";
+import type { ChatMessage } from "@/features/chat/types/Chat";
+import { collectShownTrackIds } from "@/features/chat/utils/ShownTracks";
 import { MAX_TOOL_STEPS } from "@/shared/constants/Ai";
 import { jsonError } from "@/shared/lib/ApiResponse";
 import { chatModel } from "@/shared/lib/ChatModel";
@@ -15,7 +16,7 @@ import { chatModel } from "@/shared/lib/ChatModel";
 export const maxDuration = 30;
 
 export async function POST(request: Request) {
-  const { messages }: { messages?: UIMessage[] } = await request.json();
+  const { messages }: { messages?: ChatMessage[] } = await request.json();
 
   if (!Array.isArray(messages) || messages.length === 0) {
     return jsonError("messages are required", 400);
@@ -25,7 +26,7 @@ export async function POST(request: Request) {
     model: chatModel,
     system: SYSTEM_PROMPT,
     messages: await convertToModelMessages(messages),
-    tools: musicTools,
+    tools: createMusicTools(collectShownTrackIds(messages)),
     stopWhen: isStepCount(MAX_TOOL_STEPS),
   });
 
