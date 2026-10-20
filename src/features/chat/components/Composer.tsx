@@ -20,7 +20,7 @@ export default function Composer({ value, disabled, onChange, onSubmit }: Compos
   };
 
   return (
-    <div className="sticky bottom-0 bg-background pb-4 pt-2">
+    <div className="sticky bottom-0 -mx-4 bg-background px-4 pb-4 pt-2 before:pointer-events-none before:absolute before:inset-x-0 before:bottom-full before:h-6 before:bg-linear-to-t before:from-background before:to-transparent before:content-['']">
       <form onSubmit={handleSubmit} className="flex gap-2">
         <Input
           value={value}

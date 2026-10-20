@@ -34,9 +34,9 @@ export default function ChatView() {
   return (
     <MotionConfig reducedMotion="user">
       <AudioPreviewProvider>
-        <main className="mx-auto flex min-h-dvh w-full max-w-2xl flex-col px-4">
+        <main className="mx-auto flex min-h-dvh w-full max-w-2xl flex-col overflow-x-clip px-4">
           <ChatHeader />
-          <div className="flex flex-1 flex-col gap-5 pb-8 pt-4">
+          <div className="flex min-w-0 flex-1 flex-col gap-5 pb-10 pt-6">
             {messages.length === 0 ? (
               <EmptyState onSelect={submit} />
             ) : (

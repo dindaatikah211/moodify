@@ -17,13 +17,13 @@ export default function TrackList({ tracks }: TrackListProps) {
       variants={staggerContainer}
       initial="hidden"
       animate="visible"
-      className="grid w-full gap-3"
+      className="grid w-full grid-cols-1 gap-3"
     >
       {tracks.map((track, index) => (
         <motion.li
           key={track.id}
           variants={fadeUp}
-          className={cn("rounded-3xl", TRACK_TONES[index % TRACK_TONES.length])}
+          className={cn("min-w-0 rounded-3xl", TRACK_TONES[index % TRACK_TONES.length])}
         >
           <TrackCard track={track} />
         </motion.li>
