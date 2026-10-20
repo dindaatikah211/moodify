@@ -1,57 +1,31 @@
 "use client";
 
-import { useChat } from "@ai-sdk/react";
 import { MotionConfig } from "motion/react";
-import { useState } from "react";
+import { authClient } from "@/features/auth/services/AuthClient";
 import { AudioPreviewProvider } from "@/features/music/components/AudioPreviewProvider";
-import { CHAT_COPY } from "../constants/ChatUi";
-import { useStickToBottom } from "../hooks/useStickToBottom";
-import type { ChatMessage } from "../types/Chat";
-import ChatHeader from "./ChatHeader";
-import Composer from "./Composer";
-import EmptyState from "./EmptyState";
-import MessageBubble from "./MessageBubble";
-import StatusNote from "./StatusNote";
+import LoadingState from "./LoadingState";
+import SignedInChat from "./SignedInChat";
+import SignedOutState from "./SignedOutState";
+
+function ChatBody() {
+  const { data: session, isPending } = authClient.useSession();
+
+  if (isPending) {
+    return <LoadingState />;
+  }
+
+  if (!session) {
+    return <SignedOutState />;
+  }
+
+  return <SignedInChat key={session.user.id} userName={session.user.name} />;
+}
 
 export default function ChatView() {
-  const { messages, sendMessage, status, error } = useChat<ChatMessage>();
-  const [input, setInput] = useState("");
-  const stickToBottom = useStickToBottom(messages, status);
-  const isBusy = status === "submitted" || status === "streaming";
-
-  const submit = (text: string) => {
-    const trimmed = text.trim();
-
-    if (!trimmed || isBusy) {
-      return;
-    }
-
-    stickToBottom();
-    sendMessage({ text: trimmed });
-    setInput("");
-  };
-
   return (
     <MotionConfig reducedMotion="user">
       <AudioPreviewProvider>
-        <main className="mx-auto flex min-h-dvh w-full max-w-2xl flex-col overflow-x-clip px-4">
-          <ChatHeader />
-          <div className="flex min-w-0 flex-1 flex-col gap-5 pb-10 pt-6">
-            {messages.length === 0 ? (
-              <EmptyState onSelect={submit} />
-            ) : (
-              messages.map((message) => <MessageBubble key={message.id} message={message} />)
-            )}
-            {status === "submitted" && <StatusNote label={CHAT_COPY.typing} pending />}
-            {error && <StatusNote label={CHAT_COPY.requestError} />}
-          </div>
-          <Composer
-            value={input}
-            disabled={isBusy}
-            onChange={setInput}
-            onSubmit={() => submit(input)}
-          />
-        </main>
+        <ChatBody />
       </AudioPreviewProvider>
     </MotionConfig>
   );

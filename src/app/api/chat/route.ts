@@ -5,6 +5,7 @@ import {
   streamText,
   toUIMessageStream,
 } from "ai";
+import { getSession } from "@/features/auth/services/Session";
 import { SYSTEM_PROMPT } from "@/features/chat/constants/SystemPrompt";
 import { createMusicTools } from "@/features/chat/tools/MusicTools";
 import type { ChatMessage } from "@/features/chat/types/Chat";
@@ -16,6 +17,12 @@ import { chatModel } from "@/shared/lib/ChatModel";
 export const maxDuration = 30;
 
 export async function POST(request: Request) {
+  const session = await getSession(request);
+
+  if (!session) {
+    return jsonError("Unauthorized", 401);
+  }
+
   const { messages }: { messages?: ChatMessage[] } = await request.json();
 
   if (!Array.isArray(messages) || messages.length === 0) {
