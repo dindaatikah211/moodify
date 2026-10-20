@@ -1,11 +1,13 @@
 "use client";
 
 import { useChat } from "@ai-sdk/react";
+import { MotionConfig } from "motion/react";
 import { useState } from "react";
 import { AudioPreviewProvider } from "@/features/music/components/AudioPreviewProvider";
 import { CHAT_COPY } from "../constants/ChatUi";
 import { useStickToBottom } from "../hooks/useStickToBottom";
 import type { ChatMessage } from "../types/Chat";
+import ChatHeader from "./ChatHeader";
 import Composer from "./Composer";
 import EmptyState from "./EmptyState";
 import MessageBubble from "./MessageBubble";
@@ -30,24 +32,27 @@ export default function ChatView() {
   };
 
   return (
-    <AudioPreviewProvider>
-      <main className="mx-auto flex min-h-dvh w-full max-w-2xl flex-col px-4">
-        <div className="flex flex-1 flex-col gap-4 py-8">
-          {messages.length === 0 ? (
-            <EmptyState onSelect={submit} />
-          ) : (
-            messages.map((message) => <MessageBubble key={message.id} message={message} />)
-          )}
-          {status === "submitted" && <StatusNote label={CHAT_COPY.typing} pending />}
-          {error && <StatusNote label={CHAT_COPY.requestError} />}
-        </div>
-        <Composer
-          value={input}
-          disabled={isBusy}
-          onChange={setInput}
-          onSubmit={() => submit(input)}
-        />
-      </main>
-    </AudioPreviewProvider>
+    <MotionConfig reducedMotion="user">
+      <AudioPreviewProvider>
+        <main className="mx-auto flex min-h-dvh w-full max-w-2xl flex-col px-4">
+          <ChatHeader />
+          <div className="flex flex-1 flex-col gap-5 pb-8 pt-4">
+            {messages.length === 0 ? (
+              <EmptyState onSelect={submit} />
+            ) : (
+              messages.map((message) => <MessageBubble key={message.id} message={message} />)
+            )}
+            {status === "submitted" && <StatusNote label={CHAT_COPY.typing} pending />}
+            {error && <StatusNote label={CHAT_COPY.requestError} />}
+          </div>
+          <Composer
+            value={input}
+            disabled={isBusy}
+            onChange={setInput}
+            onSubmit={() => submit(input)}
+          />
+        </main>
+      </AudioPreviewProvider>
+    </MotionConfig>
   );
 }

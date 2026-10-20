@@ -26,12 +26,19 @@ export default function Composer({ value, disabled, onChange, onSubmit }: Compos
           value={value}
           onChange={(event) => onChange(event.target.value)}
           placeholder={CHAT_COPY.placeholder}
+          className="h-12 rounded-full border-foreground/25 bg-card px-5 text-base md:text-base"
         />
-        <Button type="submit" size="icon" disabled={disabled || !value.trim()} aria-label={CHAT_COPY.send}>
+        <Button
+          type="submit"
+          size="icon"
+          disabled={disabled || !value.trim()}
+          aria-label={CHAT_COPY.send}
+          className="size-12 shrink-0 rounded-full"
+        >
           <SendHorizontal />
         </Button>
       </form>
-      <p className="mt-2 text-center text-xs text-muted-foreground">{CHAT_COPY.privacy}</p>
+      <p className="mt-2 text-xs text-muted-foreground">{CHAT_COPY.privacy}</p>
     </div>
   );
 }

@@ -7,3 +7,5 @@ export const TRACK_UI = {
   play: "Putar cuplikan",
   pause: "Hentikan cuplikan",
 } as const;
+
+export const TRACK_TONES = ["bg-mint", "bg-blush", "bg-sky", "bg-card"] as const;
