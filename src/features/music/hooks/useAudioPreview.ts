@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { fetchFreshPreview } from "../services/PreviewApi";
 
 export function useAudioPreview() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -10,8 +11,25 @@ export function useAudioPreview() {
     setPlayingId(null);
   }, []);
 
+  const attempt = useCallback(
+    async (id: string, url: string) => {
+      const audio = new Audio(url);
+      audio.addEventListener("ended", stop);
+      audioRef.current = audio;
+      setPlayingId(id);
+
+      const started = await audio.play().then(
+        () => true,
+        () => false,
+      );
+
+      return { audio, started };
+    },
+    [stop],
+  );
+
   const toggle = useCallback(
-    (id: string, url: string) => {
+    async (id: string, url: string) => {
       const isCurrent = playingId === id;
       stop();
 
@@ -19,13 +37,31 @@ export function useAudioPreview() {
         return;
       }
 
-      const audio = new Audio(url);
-      audio.addEventListener("ended", stop);
-      audioRef.current = audio;
-      setPlayingId(id);
-      audio.play().catch(stop);
+      const first = await attempt(id, url);
+
+      if (first.started || audioRef.current !== first.audio) {
+        return;
+      }
+
+      const freshUrl = await fetchFreshPreview(id).catch(() => null);
+
+      if (audioRef.current !== first.audio) {
+        return;
+      }
+
+      stop();
+
+      if (!freshUrl) {
+        return;
+      }
+
+      const second = await attempt(id, freshUrl);
+
+      if (!second.started && audioRef.current === second.audio) {
+        stop();
+      }
     },
-    [playingId, stop],
+    [attempt, playingId, stop],
   );
 
   useEffect(() => stop, [stop]);

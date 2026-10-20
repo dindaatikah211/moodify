@@ -17,6 +17,9 @@ export const CHAT_COPY = {
   noResults: "Belum ada lagu yang cocok. Coba sebut judul dan artis lain, atau ceritakan moodmu.",
   toolError: "Pencarian lagu gagal. Kirim pesanmu sekali lagi.",
   requestError: "Pesan belum terkirim. Kirim sekali lagi.",
+  burstLimit: "Pelan-pelan dulu ya. Tunggu sebentar, lalu kirim lagi.",
+  dailyLimit: "Batas obrolan hari ini sudah tercapai. Coba lagi besok.",
+  sessionExpired: "Sesimu sudah berakhir. Masuk lagi untuk melanjutkan.",
   privacy: "Obrolan diproses oleh Google Gemini. Hindari menulis data pribadi yang sensitif.",
 } as const;
 

@@ -16,6 +16,10 @@ type DeezerSearchResponse = {
   data?: DeezerTrack[];
 };
 
+type DeezerTrackResponse = {
+  preview?: string;
+};
+
 type Picker = (results: DeezerTrack[]) => DeezerTrack | null;
 
 const ALTERNATE_VERSION = /\b(live|acoustic|remix|karaoke|instrumental|demo)\b/i;
@@ -97,3 +101,11 @@ async function searchFirstHit(seed: SeedQuery, pick: Picker): Promise<DeezerTrac
 export const findDeezerTrack = (seed: SeedQuery) => searchFirstHit(seed, pickExactMatch(seed));
 
 export const findClosestTrack = (seed: SeedQuery) => searchFirstHit(seed, preferStudioVersion);
+
+export async function getDeezerPreviewUrl(trackId: string): Promise<string | null> {
+  const data = await fetchJson<DeezerTrackResponse>(new URL(`${DEEZER_BASE_URL}/track/${trackId}`), {
+    cache: "no-store",
+  });
+
+  return data.preview || null;
+}

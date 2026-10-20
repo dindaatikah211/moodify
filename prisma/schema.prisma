@@ -83,3 +83,12 @@ model Conversation {
   @@index([userId, updatedAt])
   @@map("conversation")
 }
+
+model RateLimitWindow {
+  key       String   @id
+  count     Int
+  expiresAt DateTime
+
+  @@index([expiresAt])
+  @@map("rate_limit_window")
+}

@@ -11,8 +11,10 @@ import { createMusicTools } from "@/features/chat/tools/MusicTools";
 import type { ChatMessage } from "@/features/chat/types/Chat";
 import { collectShownTrackIds } from "@/features/chat/utils/ShownTracks";
 import { MAX_TOOL_STEPS } from "@/shared/constants/Ai";
-import { jsonError } from "@/shared/lib/ApiResponse";
+import { CHAT_RATE_LIMITS } from "@/shared/constants/RateLimit";
+import { jsonError, rateLimitedResponse } from "@/shared/lib/ApiResponse";
 import { chatModel } from "@/shared/lib/ChatModel";
+import { consumeRateLimit } from "@/shared/lib/RateLimit";
 
 export const maxDuration = 30;
 
@@ -20,7 +22,13 @@ export async function POST(request: Request) {
   const session = await getSession(request);
 
   if (!session) {
-    return jsonError("Unauthorized", 401);
+    return jsonError("unauthorized", 401);
+  }
+
+  const limit = await consumeRateLimit(session.user.id, CHAT_RATE_LIMITS);
+
+  if (!limit.allowed) {
+    return rateLimitedResponse(limit);
   }
 
   const { messages }: { messages?: ChatMessage[] } = await request.json();

@@ -9,6 +9,7 @@ import { useAutoSave } from "../hooks/useAutoSave";
 import { useStickToBottom } from "../hooks/useStickToBottom";
 import type { ChatMessage } from "../types/Chat";
 import type { StoredConversation } from "../types/Conversation";
+import { describeChatError } from "../utils/ChatError";
 import ChatShell from "./ChatShell";
 import Composer from "./Composer";
 import EmptyState from "./EmptyState";
@@ -67,7 +68,7 @@ export default function ChatSession({ conversation, userName, onNewChat }: ChatS
           messages.map((message) => <MessageBubble key={message.id} message={message} />)
         )}
         {status === "submitted" && <StatusNote label={CHAT_COPY.typing} pending />}
-        {error && <StatusNote label={CHAT_COPY.requestError} />}
+        {error && <StatusNote label={describeChatError(error)} />}
       </div>
       <Composer
         value={input}
