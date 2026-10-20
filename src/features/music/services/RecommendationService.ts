@@ -1,7 +1,7 @@
 import { interleave } from "@/shared/lib/Collections";
 import { RESULTS_PER_REQUEST } from "../constants/Music";
 import type { SeedQuery, SeedTrack, Track } from "../types/Track";
-import { findDeezerTrack, type DeezerTrack } from "./DeezerService";
+import { findClosestTrack, type DeezerTrack } from "./DeezerService";
 import { getSimilarTracks, getTopTracksByTag, getTrackTopTags } from "./LastFmService";
 import { resolveTracks } from "./TrackResolverService";
 
@@ -27,7 +27,7 @@ export async function recommendSimilarTo(
   query: SeedQuery,
   excludeIds: ExcludeIds,
 ): Promise<Track[]> {
-  const anchor = await findDeezerTrack(query).catch(() => null);
+  const anchor = await findClosestTrack(query).catch(() => null);
   const seed = toSeed(query, anchor);
 
   if (!seed) {

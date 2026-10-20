@@ -16,7 +16,32 @@ type DeezerSearchResponse = {
   data?: DeezerTrack[];
 };
 
+type Picker = (results: DeezerTrack[]) => DeezerTrack | null;
+
 const ALTERNATE_VERSION = /\b(live|acoustic|remix|karaoke|instrumental|demo)\b/i;
+
+const normalize = (value: string) => {
+  const cleaned = value
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/\(.*?\)|\[.*?\]/g, " ")
+    .replace(/\s-\s.*$/, " ")
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim();
+
+  return cleaned || value.toLowerCase().trim();
+};
+
+const isSameTitle = (seedTitle: string, resultTitle: string) =>
+  normalize(seedTitle) === normalize(resultTitle);
+
+const isSameArtist = (seedArtist: string, resultArtist: string) => {
+  const seed = normalize(seedArtist);
+  const result = normalize(resultArtist);
+
+  return seed === result || result.includes(seed) || seed.includes(result);
+};
 
 const stripQuotes = (value: string) => value.replaceAll('"', "");
 
@@ -32,10 +57,20 @@ const toSearchQueries = ({ title, artist }: SeedQuery) => {
   return [`artist:"${cleanArtist}" track:"${cleanTitle}"`, `${cleanArtist} ${cleanTitle}`];
 };
 
-const pickStudioVersion = (results: DeezerTrack[]) =>
-  results.find((track) => !ALTERNATE_VERSION.test(track.title)) ?? results[0] ?? null;
+const preferStudioVersion = (tracks: DeezerTrack[]) =>
+  tracks.find((track) => !ALTERNATE_VERSION.test(track.title)) ?? tracks[0] ?? null;
 
-async function searchDeezer(query: string): Promise<DeezerTrack | null> {
+const pickExactMatch =
+  ({ title, artist }: SeedQuery): Picker =>
+  (results) =>
+    preferStudioVersion(
+      results.filter(
+        (track) =>
+          isSameTitle(title, track.title) && (!artist || isSameArtist(artist, track.artist.name)),
+      ),
+    );
+
+async function fetchResults(query: string): Promise<DeezerTrack[]> {
   const data = await fetchJson<DeezerSearchResponse>(
     buildUrl(`${DEEZER_BASE_URL}/search`, {
       q: query,
@@ -44,17 +79,21 @@ async function searchDeezer(query: string): Promise<DeezerTrack | null> {
     { next: { revalidate: REVALIDATE_SECONDS.deezer } },
   );
 
-  return pickStudioVersion(data.data ?? []);
+  return data.data ?? [];
 }
 
-export async function findDeezerTrack(seed: SeedQuery): Promise<DeezerTrack | null> {
+async function searchFirstHit(seed: SeedQuery, pick: Picker): Promise<DeezerTrack | null> {
   for (const query of toSearchQueries(seed)) {
-    const match = await searchDeezer(query);
+    const hit = pick(await fetchResults(query));
 
-    if (match) {
-      return match;
+    if (hit) {
+      return hit;
     }
   }
 
   return null;
 }
+
+export const findDeezerTrack = (seed: SeedQuery) => searchFirstHit(seed, pickExactMatch(seed));
+
+export const findClosestTrack = (seed: SeedQuery) => searchFirstHit(seed, preferStudioVersion);
