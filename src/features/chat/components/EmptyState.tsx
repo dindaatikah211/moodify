@@ -1,8 +1,8 @@
 "use client";
 
+import HeroSection from "@/shared/components/commons/HeroSection";
 import { Button } from "@/shared/components/ui/button";
 import { CHAT_COPY, SUGGESTIONS } from "../constants/ChatUi";
-import HeroSection from "./HeroSection";
 
 type EmptyStateProps = {
   userName: string;

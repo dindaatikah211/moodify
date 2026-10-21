@@ -2,10 +2,10 @@
 
 import { motion } from "motion/react";
 import type { ReactNode } from "react";
-import CatMark from "@/shared/components/commons/CatMark";
-import Squiggle from "@/shared/components/commons/Squiggle";
 import { fadeUp, staggerContainer } from "@/shared/constants/Variants";
-import type { Headline } from "../types/Hero";
+import type { Headline } from "@/shared/types/Headline";
+import CatMark from "./CatMark";
+import Squiggle from "./Squiggle";
 
 type HeroSectionProps = {
   headline: Headline;
