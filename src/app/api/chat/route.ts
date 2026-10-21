@@ -16,7 +16,7 @@ import { jsonError, rateLimitedResponse } from "@/shared/lib/ApiResponse";
 import { chatModel } from "@/shared/lib/ChatModel";
 import { consumeRateLimit } from "@/shared/lib/RateLimit";
 
-export const maxDuration = 30;
+export const maxDuration = 60;
 
 export async function POST(request: Request) {
   const session = await getSession(request);
@@ -43,6 +43,7 @@ export async function POST(request: Request) {
     messages: await convertToModelMessages(messages),
     tools: createMusicTools(collectShownTrackIds(messages)),
     stopWhen: isStepCount(MAX_TOOL_STEPS),
+    onError: ({ error }) => console.error("chat stream error:", error),
   });
 
   return createUIMessageStreamResponse({
