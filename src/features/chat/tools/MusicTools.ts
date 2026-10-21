@@ -12,7 +12,9 @@ const songQuerySchema = z.object({
 });
 
 const moodSchema = z.object({
-  tag: z.string().describe("Satu tag mood atau genre dalam bahasa Inggris, contoh: sad, chill"),
+  tag: z
+    .string()
+    .describe("Satu tag genre atau mood dalam bahasa Inggris yang spesifik, contoh: ballad, mellow"),
 });
 
 const suggestionsSchema = z.object({
@@ -23,30 +25,30 @@ const suggestionsSchema = z.object({
         artist: z.string().describe("Nama artis utama yang benar"),
         reason: z
           .string()
-          .describe("Alasan singkat lagu ini sesuai nuansa yang diminta, misalnya tema lirik atau tempo"),
+          .describe("Alasan singkat lagu ini sesuai permintaan, misalnya tempo, instrumen, atau tema lirik"),
       }),
     )
     .min(1)
     .max(12)
-    .describe("Lagu usulanmu yang benar-benar ada dan sesuai permintaan pengguna"),
+    .describe("Lagu usulanmu yang benar-benar ada dan sesuai persis dengan permintaan pengguna"),
 });
 
 export const createMusicTools = (excludeIds: ReadonlySet<string>) => ({
   recommendSimilarTo: tool({
     description:
-      "Cari lagu dengan vibes mirip sebuah lagu. Lagu yang sudah pernah ditampilkan otomatis tidak diulang, jadi panggil lagi dengan lagu acuan yang sama saat pengguna meminta lagu lain.",
+      "Cari lagu dengan vibes mirip sebuah lagu yang dikenal secara global. Lagu yang sudah pernah ditampilkan otomatis tidak diulang, jadi panggil lagi dengan lagu acuan yang sama saat pengguna meminta lagu lain.",
     inputSchema: songQuerySchema,
     execute: (query) => recommendSimilarTo(query, excludeIds),
   }),
   recommendByMood: tool({
     description:
-      "Cari lagu populer berdasarkan mood atau genre secara umum, tanpa membedakan bahasa atau negara. Lagu yang sudah pernah ditampilkan otomatis tidak diulang.",
+      "Cadangan saja. Mengambil lagu terpopuler untuk sebuah tag genre secara umum, tanpa memahami tempo, intensitas, atau bahasa. Pakai hanya untuk permintaan genre yang luas, atau jika suggestTracks mengembalikan daftar kosong.",
     inputSchema: moodSchema,
     execute: ({ tag }) => recommendByMood(tag, excludeIds),
   }),
   suggestTracks: tool({
     description:
-      "Verifikasi lagu usulanmu sendiri di katalog musik. Wajib dipakai untuk permintaan lagu berbahasa atau berasal dari negara tertentu, dan untuk permintaan dengan nuansa atau intensitas khusus. Hanya lagu yang judul dan artisnya terbukti cocok yang akan ditampilkan.",
+      "Jalur utama untuk permintaan lagu berdasarkan mood, suasana, situasi, tempo, bahasa, atau negara. Kamu memilih lagunya sendiri, lalu sistem memverifikasi bahwa judul dan artisnya benar-benar ada. Lagu yang sudah pernah ditampilkan otomatis tidak diulang.",
     inputSchema: suggestionsSchema,
     execute: ({ tracks }) => verifySuggestions(tracks, excludeIds),
   }),
