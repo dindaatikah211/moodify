@@ -1,3 +1,4 @@
+import { ERROR_CODES } from "@/shared/constants/ErrorCodes";
 import { CHAT_COPY } from "../constants/ChatUi";
 
 type ErrorPayload = {
@@ -14,6 +15,10 @@ const parsePayload = (message: string): ErrorPayload => {
 };
 
 export function describeChatError(error: Error): string {
+  if (error.message === ERROR_CODES.modelBusy) {
+    return CHAT_COPY.modelBusy;
+  }
+
   const { error: code, scope } = parsePayload(error.message);
 
   if (code === "rate_limited") {
