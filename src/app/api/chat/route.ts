@@ -5,8 +5,10 @@ import {
   streamText,
   toUIMessageStream,
 } from "ai";
+import { z } from "zod";
 import { getSession } from "@/features/auth/services/Session";
 import { SYSTEM_PROMPT } from "@/features/chat/constants/SystemPrompt";
+import { createMoodTools } from "@/features/chat/tools/MoodTools";
 import { createMusicTools } from "@/features/chat/tools/MusicTools";
 import type { ChatMessage } from "@/features/chat/types/Chat";
 import { collectShownTrackIds } from "@/features/chat/utils/ShownTracks";
@@ -18,6 +20,11 @@ import { chatModel } from "@/shared/lib/ChatModel";
 import { consumeRateLimit } from "@/shared/lib/RateLimit";
 
 export const maxDuration = 60;
+
+type ChatRequestBody = {
+  id?: string;
+  messages?: ChatMessage[];
+};
 
 export async function POST(request: Request) {
   const session = await getSession(request);
@@ -32,17 +39,20 @@ export async function POST(request: Request) {
     return rateLimitedResponse(limit);
   }
 
-  const { messages }: { messages?: ChatMessage[] } = await request.json();
+  const { id, messages }: ChatRequestBody = await request.json();
 
-  if (!Array.isArray(messages) || messages.length === 0) {
-    return jsonError("messages are required", 400);
+  if (!id || !z.uuid().safeParse(id).success || !Array.isArray(messages) || messages.length === 0) {
+    return jsonError("Invalid request", 400);
   }
 
   const result = streamText({
     model: chatModel,
     system: SYSTEM_PROMPT,
     messages: await convertToModelMessages(messages),
-    tools: createMusicTools(collectShownTrackIds(messages)),
+    tools: {
+      ...createMusicTools(collectShownTrackIds(messages)),
+      ...createMoodTools({ userId: session.user.id, conversationId: id }),
+    },
     stopWhen: isStepCount(MAX_TOOL_STEPS),
     maxRetries: MODEL_RETRIES,
     onError: ({ error }) => console.error("chat stream error:", error),

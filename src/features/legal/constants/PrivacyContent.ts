@@ -16,12 +16,13 @@ export const PRIVACY_SECTIONS: readonly PrivacySection[] = [
     items: [
       "Data akun Google saat kamu masuk: nama, alamat email, dan foto profil.",
       "Isi obrolan: pesan yang kamu kirim, balasan chatbot, dan daftar lagu yang ditampilkan.",
+      "Perkiraan mood dari ceritamu (misalnya sedih atau senang) beserta tingkat intensitas dan waktunya, yang dicatat chatbot untuk halaman riwayat mood. Ini hanya perkiraan otomatis, bukan penilaian kesehatan atau diagnosis.",
       "Data teknis: cookie sesi agar kamu tetap masuk, alamat IP dan jenis perangkat yang tercatat pada sesi, serta penghitung jumlah pesan untuk mencegah penyalahgunaan.",
     ],
   },
   {
     title: "Cara data dipakai",
-    text: "Data dipakai hanya untuk menjalankan fitur aplikasi: mengenali akunmu, menyimpan riwayat obrolan supaya bisa dilanjutkan, dan membatasi penyalahgunaan. Data tidak dijual dan tidak dipakai untuk iklan.",
+    text: "Data dipakai hanya untuk menjalankan fitur aplikasi: mengenali akunmu, menyimpan riwayat obrolan dan mood supaya bisa dilihat kembali, dan membatasi penyalahgunaan. Data tidak dijual dan tidak dipakai untuk iklan.",
   },
   {
     title: "Layanan pihak ketiga",
@@ -35,7 +36,7 @@ export const PRIVACY_SECTIONS: readonly PrivacySection[] = [
   },
   {
     title: "Penyimpanan dan penghapusan",
-    text: "Data disimpan selama akunmu dipakai. Kamu dapat meminta penghapusan akun beserta seluruh riwayat obrolanmu lewat kontak di bawah, dan permintaan itu akan diproses dalam waktu yang wajar.",
+    text: "Data disimpan selama akunmu dipakai. Kamu dapat menghapus obrolan kapan saja lewat panel Riwayat, dan itu ikut menghapus mood yang tercatat dari obrolan tersebut. Untuk menghapus akun beserta seluruh datanya, hubungi kontak di bawah, dan permintaan itu akan diproses dalam waktu yang wajar.",
   },
   {
     title: "Keamanan",

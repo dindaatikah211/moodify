@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { fetchLatestConversation } from "../services/ConversationApi";
+import { fetchConversation, fetchLatestConversation } from "../services/ConversationApi";
 import type { StoredConversation } from "../types/Conversation";
 
 const createEmptyConversation = (): StoredConversation => ({
@@ -28,5 +28,13 @@ export function useActiveConversation() {
 
   const startNew = useCallback(() => setConversation(createEmptyConversation()), []);
 
-  return { conversation, startNew };
+  const open = useCallback(async (id: string) => {
+    const stored = await fetchConversation(id).catch(() => null);
+
+    if (stored) {
+      setConversation(stored);
+    }
+  }, []);
+
+  return { conversation, startNew, open };
 }

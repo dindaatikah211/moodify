@@ -11,6 +11,10 @@ export const CHAT_COPY = {
   placeholder: "Ceritakan moodmu atau sebut satu lagu...",
   send: "Kirim",
   newChat: "Obrolan baru",
+  history: "Riwayat",
+  moodPage: "Mood",
+  moodLogged: "Mood tercatat:",
+  moodHistory: "Lihat riwayat",
   loading: "Menyiapkan obrolan...",
   typing: `${APP_NAME} sedang menulis...`,
   searching: "Mencari lagu...",
@@ -22,6 +26,14 @@ export const CHAT_COPY = {
   dailyLimit: "Batas obrolan hari ini sudah tercapai. Coba lagi besok.",
   sessionExpired: "Sesimu sudah berakhir. Masuk lagi untuk melanjutkan.",
   privacy: "Obrolan diproses oleh Google Gemini. Hindari menulis data pribadi yang sensitif.",
+} as const;
+
+export const HISTORY_COPY = {
+  title: "Riwayat obrolan",
+  close: "Tutup",
+  empty: "Belum ada obrolan tersimpan.",
+  delete: "Hapus obrolan",
+  confirmDelete: "Yakin hapus?",
 } as const;
 
 export const SUGGESTIONS = [

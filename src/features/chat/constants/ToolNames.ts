@@ -1,0 +1,1 @@
+export const MUSIC_TOOL_NAMES = ["recommendSimilarTo", "recommendByMood", "suggestTracks"] as const;

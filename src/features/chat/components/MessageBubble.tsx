@@ -4,8 +4,9 @@ import { motion } from "motion/react";
 import { fadeUp } from "@/shared/constants/Variants";
 import { cn } from "@/shared/lib/utils";
 import type { ChatMessage } from "../types/Chat";
-import { isMusicToolPart } from "../utils/PartGuards";
+import { isMoodToolPart, isMusicToolPart } from "../utils/PartGuards";
 import MessagePart from "./MessagePart";
+import MoodNote from "./MoodNote";
 import ToolResults from "./ToolResults";
 
 type MessageBubbleProps = {
@@ -29,6 +30,10 @@ export default function MessageBubble({ message }: MessageBubbleProps) {
 
         if (isMusicToolPart(part)) {
           return index === firstToolIndex ? <ToolResults key={key} parts={toolParts} /> : null;
+        }
+
+        if (isMoodToolPart(part)) {
+          return <MoodNote key={key} part={part} />;
         }
 
         return <MessagePart key={key} part={part} isUser={isUser} />;
