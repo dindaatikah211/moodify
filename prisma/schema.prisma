@@ -18,6 +18,7 @@ model User {
   sessions      Session[]
   accounts      Account[]
   conversations Conversation[]
+  moodEntries   MoodEntry[]
 
   @@unique([email])
   @@map("user")
@@ -91,4 +92,18 @@ model RateLimitWindow {
 
   @@index([expiresAt])
   @@map("rate_limit_window")
+}
+
+model MoodEntry {
+  id             String   @id @default(cuid())
+  userId         String
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  conversationId String
+  mood           String
+  intensity      Int
+  createdAt      DateTime @default(now())
+
+  @@index([userId, createdAt])
+  @@index([conversationId])
+  @@map("mood_entry")
 }
