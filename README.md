@@ -2,16 +2,18 @@
 
 > A mood-aware music chatbot. Tell it how you feel, get songs that fit.
 
-Moodify adalah chatbot musik berbahasa Indonesia. Kamu menceritakan perasaanmu atau menyebut satu lagu, lalu chatbot mencarikan lagu dengan vibes yang pas, lengkap dengan cuplikan 30 detik dan tautan ke Spotify atau YouTube Music. Obrolanmu tersimpan, dan mood yang kamu ceritakan dicatat menjadi riwayat mood yang bisa dilihat kembali.
+Moodify adalah chatbot musik berbahasa Indonesia. Kamu menceritakan perasaanmu atau menyebut satu lagu, lalu chatbot mencarikan lagu dengan vibes yang pas, lengkap dengan cuplikan 30 detik dan tautan ke Spotify atau YouTube Music. Obrolanmu tersimpan, dan mood yang kamu ceritakan dicatat menjadi riwayat mood yang bisa dilihat kembali. Aplikasinya bisa dipasang di layar utama ponsel seperti aplikasi biasa.
 
 ## Fitur
 
 - Rekomendasi lagu dari cerita mood atau dari satu lagu acuan, termasuk lagu Indonesia.
 - Permintaan lanjutan seperti "mau lagi" atau "yang lebih sedih" dipahami dari riwayat obrolan, dan lagu yang sudah tampil tidak diulang.
 - Putar cuplikan 30 detik di dalam aplikasi, plus tautan pencarian ke Spotify dan YouTube Music.
-- Login dengan Google, riwayat obrolan tersimpan, bisa dibuka kembali dan dihapus.
+- Login dengan Google. Pemilih akun selalu tampil, dan ada tombol Ganti akun di halaman Akun.
+- Riwayat obrolan tersimpan, bisa dibuka kembali dan dihapus.
 - Riwayat mood: grafik mood yang paling sering muncul dan kalender mood 28 hari.
 - Hapus akun beserta seluruh data dari dalam aplikasi.
+- Bisa dipasang di layar utama (PWA) dan menampilkan halaman pemberitahuan saat offline.
 - Pembatas permintaan per pengguna dan pesan error yang ramah saat kuota model habis.
 
 ## Teknologi
@@ -24,6 +26,7 @@ Moodify adalah chatbot musik berbahasa Indonesia. Kamu menceritakan perasaanmu a
 | Data musik | Last.fm API (kemiripan lagu), Deezer API (verifikasi, sampul, cuplikan) |
 | Autentikasi | Better Auth dengan Google OAuth |
 | Database | PostgreSQL di Neon, Prisma 7 |
+| PWA | Web App Manifest, service worker minimal untuk halaman offline |
 | Hosting | Vercel |
 
 ## Arsitektur
@@ -61,20 +64,27 @@ Alur satu pesan:
 
 **Mood adalah perkiraan.** Mood dicatat oleh model sebagai perkiraan, bukan diagnosis. Hal ini dinyatakan di halaman riwayat mood dan di kebijakan privasi, dan menghapus obrolan ikut menghapus mood dari obrolan itu.
 
+**PWA dengan service worker minimal.** Service worker hanya menampilkan halaman offline saat perpindahan halaman gagal karena tidak ada koneksi. Ia sengaja tidak menyimpan halaman, data obrolan, atau respons API di cache. Aplikasi ini memuat data pribadi dan selalu butuh jaringan, jadi cache yang agresif hanya menambah risiko data basi atau data akun lain yang tersisa di perangkat bersama. Halaman offline dibuat sebagai HTML mandiri karena saat offline berkas JavaScript dan CSS aplikasi tidak bisa dimuat. Ikon aplikasi dirender dari trace vektor logo, bukan diperkecil dari gambar raster, supaya tetap tajam di layar beresolusi tinggi.
+
 ## Struktur folder
 
 ```text
 src/
-  app/               route Next.js (halaman dan API)
+  app/               route Next.js (halaman, API, manifest)
   features/
-    auth/            login, akun, hapus akun
+    auth/            login, ganti akun, halaman akun, hapus akun
     chat/            UI chat, tool Gemini, riwayat obrolan
     landing/         landing page
     legal/           kebijakan privasi
     mood/            pencatatan dan halaman riwayat mood
     music/           layanan Last.fm dan Deezer, kartu lagu, pemutar
+    pwa/             pemasangan aplikasi dan pendaftaran service worker
   shared/            komponen, konstanta, dan utilitas bersama
 prisma/              skema database
+public/
+  icons/             ikon PWA (biasa dan maskable)
+  sw.js              service worker
+  offline.html       halaman saat offline
 ```
 
 Setiap fitur punya `components`, `constants`, `hooks`, `services`, dan `types` sendiri. Aturan dependensinya satu arah: `app` memakai `features` dan `shared`, `features` memakai `shared`.
@@ -92,7 +102,7 @@ pnpm db:push
 pnpm dev
 ```
 
-Buka `http://localhost:3000`.
+Buka `http://localhost:3000`. Service worker hanya didaftarkan pada build produksi, jadi fitur PWA seperti halaman offline diuji di domain hasil deploy atau lewat `pnpm build` lalu `pnpm start`.
 
 ### Variabel environment
 
@@ -125,6 +135,14 @@ pnpm db:push:prod   # terapkan skema ke produksi, membaca .env.prod-migrate
 2. Tambahkan `https://<domain>` ke Authorized JavaScript origins dan `https://<domain>/api/auth/callback/google` ke Authorized redirect URIs di Google Cloud Console.
 3. Ubah status aplikasi OAuth ke "In production" agar semua akun Google bisa masuk. Ini butuh halaman kebijakan privasi (`/privacy`).
 4. File `vercel.json` menjalankan fungsi di region Singapura, dekat dengan database.
+5. Konfigurasi `next.config.ts` menambahkan header khusus untuk `/sw.js` supaya pembaruan service worker tidak tertahan di cache browser.
+
+## Memasang sebagai aplikasi
+
+- **Android (Chrome):** buka situsnya, lalu klik Pasang aplikasi di landing page atau halaman Akun, atau lewat menu browser.
+- **iPhone (Safari):** ketuk tombol Bagikan, lalu pilih Tambah ke Layar Utama.
+
+Setelah dipasang, aplikasi terbuka layar penuh langsung ke halaman obrolan. Aplikasi tetap butuh internet: tanpa koneksi, yang tampil hanya halaman pemberitahuan offline.
 
 ## Batasan yang diketahui
 
@@ -132,6 +150,7 @@ pnpm db:push:prod   # terapkan skema ke produksi, membaca .env.prod-migrate
 - Cakupan Last.fm untuk lagu Indonesia tipis, sehingga permintaan lagu lokal mengandalkan usulan model yang diverifikasi di Deezer. Kualitasnya bergantung pada pengetahuan musik model.
 - Kuota gratis Gemini terbatas. Saat habis, pengguna melihat pesan bahwa layanan sedang ramai.
 - Pencatatan mood bergantung pada model dan bisa salah menebak.
+- Mode offline hanya berupa halaman pemberitahuan. Obrolan dan pencarian lagu tidak tersedia tanpa internet.
 
 ## Kredit
 
