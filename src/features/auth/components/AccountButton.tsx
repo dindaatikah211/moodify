@@ -1,11 +1,11 @@
 "use client";
 
 import { LogOut } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/shared/components/ui/button";
 import { AUTH_COPY } from "../constants/AuthUi";
 import { authClient, signInWithGoogle, signOut } from "../services/AuthClient";
+import UserAvatar from "./UserAvatar";
 
 export default function AccountButton() {
   const { data: session, isPending } = authClient.useSession();
@@ -31,20 +31,7 @@ export default function AccountButton() {
   return (
     <div className="flex items-center gap-2">
       <Link href="/account" aria-label={AUTH_COPY.account} className="rounded-full">
-        {image ? (
-          <Image
-            src={image}
-            alt={name}
-            width={36}
-            height={36}
-            unoptimized
-            className="size-9 rounded-full ring-1 ring-foreground/20"
-          />
-        ) : (
-          <span className="grid size-9 place-items-center rounded-full bg-mint font-heading">
-            {name.slice(0, 1)}
-          </span>
-        )}
+        <UserAvatar key={image ?? "none"} name={name} image={image} size={36} />
       </Link>
       <Button
         variant="ghost"

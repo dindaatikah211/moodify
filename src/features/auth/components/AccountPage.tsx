@@ -1,7 +1,6 @@
 "use client";
 
 import { MessageCircle, Repeat } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 import ChatShell from "@/features/chat/components/ChatShell";
 import StatusNote from "@/features/chat/components/StatusNote";
@@ -12,6 +11,7 @@ import { ACCOUNT_COPY } from "../constants/AccountUi";
 import { AUTH_COPY } from "../constants/AuthUi";
 import { authClient, signInWithGoogle, switchAccount } from "../services/AuthClient";
 import DeleteAccountSection from "./DeleteAccountSection";
+import UserAvatar from "./UserAvatar";
 
 type ProfileProps = {
   name: string;
@@ -22,20 +22,7 @@ type ProfileProps = {
 function Profile({ name, email, image }: ProfileProps) {
   return (
     <div className="flex items-center gap-4">
-      {image ? (
-        <Image
-          src={image}
-          alt=""
-          width={64}
-          height={64}
-          unoptimized
-          className="size-16 rounded-full ring-1 ring-foreground/20"
-        />
-      ) : (
-        <span className="grid size-16 place-items-center rounded-full bg-mint font-heading text-2xl">
-          {name.slice(0, 1)}
-        </span>
-      )}
+      <UserAvatar key={image ?? "none"} name={name} image={image} size={64} className="text-2xl" />
       <div className="min-w-0 flex-1">
         <p className="truncate font-heading text-2xl font-semibold">{name}</p>
         <p className="truncate text-sm text-muted-foreground">{email}</p>
