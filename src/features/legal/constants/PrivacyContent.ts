@@ -6,7 +6,7 @@ export const PRIVACY_COPY = {
   title: "Kebijakan privasi",
   updatedAt: "Terakhir diperbarui: 21 Oktober 2026",
   intro: `${APP_NAME} adalah proyek pribadi berupa chatbot yang merekomendasikan lagu sesuai mood. Halaman ini menjelaskan data apa yang disimpan dan bagaimana data itu dipakai.`,
-  contactLabel: "Pertanyaan atau permintaan penghapusan data:",
+  contactLabel: "Pertanyaan soal privasi, atau jika kamu tidak bisa masuk ke akunmu dan ingin datamu dihapus:",
   contactEmail: "dindaatikahh@gmail.com",
 } as const;
 
@@ -36,7 +36,7 @@ export const PRIVACY_SECTIONS: readonly PrivacySection[] = [
   },
   {
     title: "Penyimpanan dan penghapusan",
-    text: "Data disimpan selama akunmu dipakai. Kamu dapat menghapus obrolan kapan saja lewat panel Riwayat, dan itu ikut menghapus mood yang tercatat dari obrolan tersebut. Kamu juga dapat menghapus akun beserta seluruh datanya sendiri lewat halaman Akun. Penghapusan bersifat permanen. Kamu bisa mencabut izin aplikasi ini di pengaturan akun Google-mu.",
+    text: "Data disimpan selama akunmu dipakai. Kamu dapat menghapus obrolan kapan saja lewat panel Riwayat, dan itu ikut menghapus mood yang tercatat dari obrolan tersebut. Untuk menghapus akun beserta seluruh datanya, buka halaman Akun lalu pilih Hapus akun. Penghapusan bersifat permanen. Jika kamu tidak bisa masuk ke akunmu, hubungi kontak di bawah. Kamu juga bisa mencabut izin aplikasi ini di pengaturan akun Google-mu.",
   },
   {
     title: "Keamanan",
