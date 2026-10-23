@@ -36,7 +36,7 @@ export const PRIVACY_SECTIONS: readonly PrivacySection[] = [
   },
   {
     title: "Penyimpanan dan penghapusan",
-    text: "Data disimpan selama akunmu dipakai. Kamu dapat menghapus obrolan kapan saja lewat panel Riwayat, dan itu ikut menghapus mood yang tercatat dari obrolan tersebut. Untuk menghapus akun beserta seluruh datanya, hubungi kontak di bawah, dan permintaan itu akan diproses dalam waktu yang wajar.",
+    text: "Data disimpan selama akunmu dipakai. Kamu dapat menghapus obrolan kapan saja lewat panel Riwayat, dan itu ikut menghapus mood yang tercatat dari obrolan tersebut. Kamu juga dapat menghapus akun beserta seluruh datanya sendiri lewat halaman Akun. Penghapusan bersifat permanen. Kamu bisa mencabut izin aplikasi ini di pengaturan akun Google-mu.",
   },
   {
     title: "Keamanan",

@@ -12,5 +12,13 @@ export const auth = betterAuth({
       clientSecret: requireEnv("GOOGLE_CLIENT_SECRET"),
     },
   },
+  user: {
+    deleteUser: {
+      enabled: true,
+      beforeDelete: async ({ id }) => {
+        await prisma.rateLimitWindow.deleteMany({ where: { key: { startsWith: `${id}:` } } });
+      },
+    },
+  },
   plugins: [nextCookies()],
 });
