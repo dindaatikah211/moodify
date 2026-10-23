@@ -10,6 +10,7 @@ export const auth = betterAuth({
     google: {
       clientId: requireEnv("GOOGLE_CLIENT_ID"),
       clientSecret: requireEnv("GOOGLE_CLIENT_SECRET"),
+      prompt: "select_account",
     },
   },
   user: {

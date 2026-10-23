@@ -1,17 +1,17 @@
 "use client";
 
-import { MessageCircle } from "lucide-react";
+import { MessageCircle, Repeat } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import ChatShell from "@/features/chat/components/ChatShell";
 import StatusNote from "@/features/chat/components/StatusNote";
+import InstallApp from "@/features/pwa/components/InstallApp";
 import { Button, buttonVariants } from "@/shared/components/ui/button";
 import { ACTION_BUTTON_STYLE } from "@/shared/constants/Ui";
 import { ACCOUNT_COPY } from "../constants/AccountUi";
 import { AUTH_COPY } from "../constants/AuthUi";
-import { authClient, signInWithGoogle } from "../services/AuthClient";
+import { authClient, signInWithGoogle, switchAccount } from "../services/AuthClient";
 import DeleteAccountSection from "./DeleteAccountSection";
-import InstallApp from "@/features/pwa/components/InstallApp";
 
 type ProfileProps = {
   name: string;
@@ -36,10 +36,18 @@ function Profile({ name, email, image }: ProfileProps) {
           {name.slice(0, 1)}
         </span>
       )}
-      <div className="min-w-0">
+      <div className="min-w-0 flex-1">
         <p className="truncate font-heading text-2xl font-semibold">{name}</p>
         <p className="truncate text-sm text-muted-foreground">{email}</p>
       </div>
+      <Button
+        {...ACTION_BUTTON_STYLE}
+        onClick={switchAccount}
+        aria-label={ACCOUNT_COPY.switchAccount}
+      >
+        <Repeat />
+        <span className="hidden sm:inline">{ACCOUNT_COPY.switchAccount}</span>
+      </Button>
     </div>
   );
 }

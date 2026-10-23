@@ -11,4 +11,9 @@ export const reauthenticate = () => signInWith("/account");
 
 export const signOut = () => authClient.signOut();
 
+export const switchAccount = async () => {
+  await authClient.signOut();
+  await signInWith("/chat");
+};
+
 export const deleteAccount = () => authClient.deleteUser();

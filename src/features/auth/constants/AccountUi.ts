@@ -3,6 +3,7 @@ export const ACCOUNT_COPY = {
   loading: "Memuat akun...",
   signInPrompt: "Masuk dulu untuk mengelola akunmu.",
   back: "Obrolan",
+  switchAccount: "Ganti akun",
   deleteTitle: "Hapus akun",
   deleteDescription:
     "Menghapus akun akan menghapus secara permanen data akunmu, semua obrolan, dan semua riwayat mood. Tindakan ini tidak bisa dibatalkan. Kamu juga bisa mencabut izin aplikasi ini di pengaturan akun Google-mu.",
