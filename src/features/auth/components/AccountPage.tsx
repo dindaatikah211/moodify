@@ -11,6 +11,7 @@ import { ACCOUNT_COPY } from "../constants/AccountUi";
 import { AUTH_COPY } from "../constants/AuthUi";
 import { authClient, signInWithGoogle } from "../services/AuthClient";
 import DeleteAccountSection from "./DeleteAccountSection";
+import InstallApp from "@/features/pwa/components/InstallApp";
 
 type ProfileProps = {
   name: string;
@@ -66,6 +67,7 @@ function AccountContent() {
   return (
     <div className="flex flex-col gap-8">
       <Profile name={name} email={email} image={image} />
+      <InstallApp />
       <DeleteAccountSection />
     </div>
   );
