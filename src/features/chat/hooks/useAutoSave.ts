@@ -6,7 +6,14 @@ import type { ChatMessage } from "../types/Chat";
 const BUSY_STATUSES: readonly ChatStatus[] = ["submitted", "streaming"];
 const SETTLED_STATUSES: readonly ChatStatus[] = ["ready", "error"];
 
-export function useAutoSave(conversationId: string, messages: ChatMessage[], status: ChatStatus) {
+type OnSaved = (conversationId: string, messages: ChatMessage[]) => void;
+
+export function useAutoSave(
+  conversationId: string,
+  messages: ChatMessage[],
+  status: ChatStatus,
+  onSaved: OnSaved,
+) {
   const previousStatus = useRef(status);
 
   useEffect(() => {
@@ -15,7 +22,9 @@ export function useAutoSave(conversationId: string, messages: ChatMessage[], sta
     previousStatus.current = status;
 
     if (hasSettled && messages.length > 0) {
-      saveConversation(conversationId, messages).catch(() => undefined);
+      saveConversation(conversationId, messages)
+        .then(() => onSaved(conversationId, messages))
+        .catch(() => undefined);
     }
-  }, [conversationId, messages, status]);
+  }, [conversationId, messages, status, onSaved]);
 }

@@ -11,8 +11,6 @@ export const CHAT_COPY = {
   placeholder: "Ceritakan moodmu atau sebut satu lagu...",
   send: "Kirim",
   newChat: "Obrolan baru",
-  history: "Riwayat",
-  moodPage: "Mood",
   moodLogged: "Mood tercatat:",
   moodHistory: "Lihat riwayat",
   loading: "Menyiapkan obrolan...",
@@ -30,10 +28,15 @@ export const CHAT_COPY = {
 
 export const HISTORY_COPY = {
   title: "Riwayat obrolan",
-  close: "Tutup",
+  loading: "Memuat riwayat...",
   empty: "Belum ada obrolan tersimpan.",
+  signIn: "Masuk dulu untuk melihat riwayat obrolanmu.",
   delete: "Hapus obrolan",
   confirmDelete: "Yakin hapus?",
+} as const;
+
+export const NAV_COPY = {
+  label: "Navigasi utama",
 } as const;
 
 export const SUGGESTIONS = [

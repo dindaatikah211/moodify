@@ -1,16 +1,14 @@
 "use client";
 
-import { MessageCircle, Repeat } from "lucide-react";
-import Link from "next/link";
+import { Repeat } from "lucide-react";
 import ChatShell from "@/features/chat/components/ChatShell";
-import StatusNote from "@/features/chat/components/StatusNote";
 import InstallApp from "@/features/pwa/components/InstallApp";
-import { Button, buttonVariants } from "@/shared/components/ui/button";
+import { Button } from "@/shared/components/ui/button";
 import { ACTION_BUTTON_STYLE } from "@/shared/constants/Ui";
 import { ACCOUNT_COPY } from "../constants/AccountUi";
-import { AUTH_COPY } from "../constants/AuthUi";
-import { authClient, signInWithGoogle, switchAccount } from "../services/AuthClient";
+import { authClient, switchAccount } from "../services/AuthClient";
 import DeleteAccountSection from "./DeleteAccountSection";
+import RequireSession from "./RequireSession";
 import UserAvatar from "./UserAvatar";
 
 type ProfileProps = {
@@ -40,21 +38,10 @@ function Profile({ name, email, image }: ProfileProps) {
 }
 
 function AccountContent() {
-  const { data: session, isPending } = authClient.useSession();
-
-  if (isPending) {
-    return <StatusNote label={ACCOUNT_COPY.loading} pending />;
-  }
+  const { data: session } = authClient.useSession();
 
   if (!session) {
-    return (
-      <div className="flex flex-col items-start gap-4">
-        <p>{ACCOUNT_COPY.signInPrompt}</p>
-        <Button onClick={signInWithGoogle} className="rounded-full">
-          {AUTH_COPY.signIn}
-        </Button>
-      </div>
-    );
+    return null;
   }
 
   const { name, email, image } = session.user;
@@ -69,24 +56,15 @@ function AccountContent() {
 }
 
 export default function AccountPage() {
-  const backLink = (
-    <Link
-      href="/chat"
-      aria-label={ACCOUNT_COPY.back}
-      className={buttonVariants(ACTION_BUTTON_STYLE)}
-    >
-      <MessageCircle />
-      <span className="hidden sm:inline">{ACCOUNT_COPY.back}</span>
-    </Link>
-  );
-
   return (
-    <ChatShell actions={backLink}>
+    <ChatShell>
       <div className="flex flex-col gap-8 pb-16 pt-6">
         <h1 className="font-heading text-4xl font-semibold tracking-tight sm:text-5xl">
           {ACCOUNT_COPY.title}
         </h1>
-        <AccountContent />
+        <RequireSession prompt={ACCOUNT_COPY.signInPrompt}>
+          <AccountContent />
+        </RequireSession>
       </div>
     </ChatShell>
   );

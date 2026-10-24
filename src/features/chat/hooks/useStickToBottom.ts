@@ -5,21 +5,35 @@ import { STICK_TO_BOTTOM_THRESHOLD_PX } from "../constants/Scroll";
 import type { ChatMessage } from "../types/Chat";
 
 export function useStickToBottom(messages: ChatMessage[], status: ChatStatus) {
-  const isNearBottomRef = useRef(true);
+  const isPinnedRef = useRef(true);
 
   const lenis = useLenis((instance) => {
-    isNearBottomRef.current = instance.limit - instance.scroll < STICK_TO_BOTTOM_THRESHOLD_PX;
+    if (instance.limit - instance.scroll < STICK_TO_BOTTOM_THRESHOLD_PX) {
+      isPinnedRef.current = true;
+    } else if (instance.direction === -1) {
+      isPinnedRef.current = false;
+    }
   });
 
-  const stick = useCallback(() => {
-    isNearBottomRef.current = true;
-  }, []);
+  const scrollToBottom = useCallback(() => {
+    if (!lenis) {
+      return;
+    }
+
+    lenis.resize();
+    lenis.scrollTo(lenis.limit, { immediate: true, force: true });
+  }, [lenis]);
+
+  const pin = useCallback(() => {
+    isPinnedRef.current = true;
+    scrollToBottom();
+  }, [scrollToBottom]);
 
   useEffect(() => {
-    if (isNearBottomRef.current) {
-      lenis?.scrollTo("bottom");
+    if (isPinnedRef.current) {
+      scrollToBottom();
     }
-  }, [lenis, messages, status]);
+  }, [messages, status, scrollToBottom]);
 
-  return stick;
+  return pin;
 }

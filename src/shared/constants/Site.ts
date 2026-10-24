@@ -30,6 +30,7 @@ export const SITE_VIEWPORT: Viewport = {
   themeColor: THEME_COLOR,
   width: "device-width",
   initialScale: 1,
+  viewportFit: "cover",
 };
 
 export const SITE_DESCRIPTION = DESCRIPTION;

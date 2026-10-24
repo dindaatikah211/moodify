@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { ConversationProvider } from "@/features/chat/components/ConversationProvider";
 import { PwaProvider } from "@/features/pwa/components/PwaProvider";
 import SmoothScroll from "@/shared/components/commons/SmoothScroll";
 import { FONT_VARIABLES } from "@/shared/constants/Fonts";
@@ -18,7 +19,9 @@ export default function RootLayout({ children }: RootLayoutProps) {
     <html lang="id" className={`${FONT_VARIABLES} h-full antialiased`}>
       <body className="min-h-full flex flex-col">
         <PwaProvider>
-          <SmoothScroll>{children}</SmoothScroll>
+          <SmoothScroll>
+            <ConversationProvider>{children}</ConversationProvider>
+          </SmoothScroll>
         </PwaProvider>
       </body>
     </html>

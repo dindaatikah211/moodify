@@ -1,9 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useActiveConversation } from "../hooks/useActiveConversation";
+import { useConversations } from "./ConversationProvider";
 import ChatSession from "./ChatSession";
-import HistoryPanel from "./HistoryPanel";
 import LoadingState from "./LoadingState";
 
 type SignedInChatProps = {
@@ -11,45 +9,11 @@ type SignedInChatProps = {
 };
 
 export default function SignedInChat({ userName }: SignedInChatProps) {
-  const { conversation, startNew, open } = useActiveConversation();
-  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+  const { active } = useConversations();
 
-  if (!conversation) {
+  if (!active) {
     return <LoadingState />;
   }
 
-  const closeHistory = () => setIsHistoryOpen(false);
-
-  const handleOpen = (id: string) => {
-    closeHistory();
-
-    if (id !== conversation.id) {
-      open(id);
-    }
-  };
-
-  const handleDeleted = (id: string) => {
-    if (id === conversation.id) {
-      startNew();
-    }
-  };
-
-  return (
-    <>
-      <ChatSession
-        key={conversation.id}
-        conversation={conversation}
-        userName={userName}
-        onNewChat={startNew}
-        onOpenHistory={() => setIsHistoryOpen(true)}
-      />
-      <HistoryPanel
-        isOpen={isHistoryOpen}
-        activeId={conversation.id}
-        onClose={closeHistory}
-        onOpen={handleOpen}
-        onDeleted={handleDeleted}
-      />
-    </>
-  );
+  return <ChatSession key={active.id} conversation={active} userName={userName} />;
 }
