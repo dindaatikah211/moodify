@@ -1,4 +1,4 @@
-const CACHE_NAME = "moodify-offline-v1";
+const CACHE_NAME = "moodify-offline-v2";
 const OFFLINE_URL = "/offline.html";
 const PRECACHE_URLS = [OFFLINE_URL, "/logo.svg"];
 
