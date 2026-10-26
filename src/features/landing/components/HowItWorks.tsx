@@ -1,15 +1,23 @@
+"use client";
+
+import { motion } from "motion/react";
+import { fadeUp } from "@/shared/constants/Variants";
 import { cn } from "@/shared/lib/utils";
+import { REVEAL, REVEAL_STAGGER } from "../constants/LandingMotion";
 import { LANDING_COPY, STEP_TONES } from "../constants/LandingUi";
 
 export default function HowItWorks() {
   return (
-    <section className="grid gap-10 py-20 lg:grid-cols-[1fr_1.4fr]">
-      <h2 className="font-heading text-4xl font-semibold tracking-tight sm:text-5xl">
+    <section className="grid gap-10 lg:grid-cols-[1fr_1.4fr] lg:gap-16">
+      <motion.h2
+        {...REVEAL}
+        className="font-heading text-4xl font-semibold tracking-tight sm:text-5xl lg:sticky lg:top-8 lg:self-start"
+      >
         {LANDING_COPY.stepsTitle}
-      </h2>
-      <ol className="flex flex-col gap-8">
+      </motion.h2>
+      <motion.ol {...REVEAL_STAGGER} className="flex flex-col gap-8">
         {LANDING_COPY.steps.map((step, index) => (
-          <li key={step.title} className="flex gap-4">
+          <motion.li key={step.title} variants={fadeUp} className="flex gap-4">
             <span
               className={cn(
                 "grid size-12 shrink-0 place-items-center rounded-full font-heading text-xl font-semibold",
@@ -22,9 +30,9 @@ export default function HowItWorks() {
               <h3 className="font-heading text-2xl font-semibold">{step.title}</h3>
               <p className="max-w-md text-muted-foreground">{step.text}</p>
             </div>
-          </li>
+          </motion.li>
         ))}
-      </ol>
+      </motion.ol>
     </section>
   );
 }
