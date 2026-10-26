@@ -1,48 +1,67 @@
+"use client";
+
+import { ArrowLeft } from "lucide-react";
+import { motion } from "motion/react";
 import Link from "next/link";
-import CatMark from "@/shared/components/commons/CatMark";
-import { APP_NAME } from "@/shared/constants/Site";
+import Navbar from "@/shared/components/commons/Navbar";
+import { buttonVariants } from "@/shared/components/ui/button";
+import { PAGE_CONTAINER } from "@/shared/constants/Layout";
+import { NAVBAR_COPY } from "@/shared/constants/NavbarUi";
+import { fadeUp, staggerContainer } from "@/shared/constants/Variants";
+import { cn } from "@/shared/lib/utils";
 import { PRIVACY_COPY, PRIVACY_SECTIONS } from "../constants/PrivacyContent";
+import { sectionId } from "../utils/SectionId";
+import PrivacySectionItem from "./PrivacySectionItem";
+import PrivacyToc from "./PrivacyToc";
 
 export default function PrivacyPage() {
   return (
-    <div className="mx-auto w-full max-w-3xl px-4 pb-16">
-      <header className="py-5">
-        <Link href="/" className="flex w-fit items-center gap-2">
-          <CatMark size={40} />
-          <span className="font-heading text-2xl font-semibold tracking-tight">{APP_NAME}</span>
+    <>
+      <Navbar>
+        <Link href="/" className={cn(buttonVariants({ variant: "ghost" }), "rounded-full")}>
+          <ArrowLeft />
+          {NAVBAR_COPY.home}
         </Link>
-      </header>
-      <main className="flex flex-col gap-10 pt-8">
-        <div className="flex flex-col gap-3">
-          <h1 className="font-heading text-4xl font-semibold tracking-tight sm:text-5xl">
-            {PRIVACY_COPY.title}
-          </h1>
-          <p className="text-sm text-muted-foreground">{PRIVACY_COPY.updatedAt}</p>
-          <p className="max-w-prose leading-relaxed">{PRIVACY_COPY.intro}</p>
-        </div>
-        {PRIVACY_SECTIONS.map(({ title, text, items }) => (
-          <section key={title} className="flex flex-col gap-3">
-            <h2 className="font-heading text-2xl font-semibold">{title}</h2>
-            {text && <p className="max-w-prose leading-relaxed">{text}</p>}
-            {items && (
-              <ul className="flex max-w-prose list-disc flex-col gap-2 pl-5 leading-relaxed">
-                {items.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            )}
-          </section>
-        ))}
-        <p className="max-w-prose leading-relaxed">
-          {PRIVACY_COPY.contactLabel}{" "}
-          <a
-            href={`mailto:${PRIVACY_COPY.contactEmail}`}
-            className="underline underline-offset-4"
+      </Navbar>
+      <div className={cn(PAGE_CONTAINER, "pb-16 sm:pb-24")}>
+        <div className="grid gap-10 pt-6 sm:pt-10 lg:grid-cols-[14rem_minmax(0,1fr)] lg:gap-16">
+          <PrivacyToc />
+          <motion.main
+            variants={staggerContainer}
+            initial="hidden"
+            animate="visible"
+            className="flex max-w-3xl flex-col gap-10 sm:gap-12"
           >
-            {PRIVACY_COPY.contactEmail}
-          </a>
-        </p>
-      </main>
-    </div>
+            <motion.div variants={fadeUp} className="flex flex-col gap-3">
+              <h1 className="font-heading text-4xl font-semibold tracking-tight sm:text-5xl">
+                {PRIVACY_COPY.title}
+              </h1>
+              <p className="text-sm text-muted-foreground">{PRIVACY_COPY.updatedAt}</p>
+              <p className="max-w-prose leading-relaxed">{PRIVACY_COPY.intro}</p>
+            </motion.div>
+            {PRIVACY_SECTIONS.map((section, index) => (
+              <PrivacySectionItem
+                key={section.title}
+                id={sectionId(index)}
+                index={index}
+                {...section}
+              />
+            ))}
+            <motion.div
+              variants={fadeUp}
+              className="flex flex-col gap-2 rounded-3xl bg-card p-6 sm:p-8"
+            >
+              <p className="max-w-prose leading-relaxed">{PRIVACY_COPY.contactLabel}</p>
+              <a
+                href={`mailto:${PRIVACY_COPY.contactEmail}`}
+                className="w-fit font-heading text-xl font-semibold underline underline-offset-4 transition-colors hover:text-primary"
+              >
+                {PRIVACY_COPY.contactEmail}
+              </a>
+            </motion.div>
+          </motion.main>
+        </div>
+      </div>
+    </>
   );
 }

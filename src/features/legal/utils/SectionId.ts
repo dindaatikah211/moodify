@@ -1,0 +1,1 @@
+export const sectionId = (index: number) => `section-${index + 1}`;
