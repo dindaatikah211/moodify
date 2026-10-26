@@ -2,6 +2,7 @@
 
 import type { ReactNode } from "react";
 import { authClient } from "@/features/auth/services/AuthClient";
+import { PAGE_CONTAINER } from "@/shared/constants/Layout";
 import { cn } from "@/shared/lib/utils";
 import BottomNav from "./BottomNav";
 import ChatHeader from "./ChatHeader";
@@ -17,10 +18,12 @@ const COLUMN_CLASS =
 
 function GuestFrame({ children }: ChatShellProps) {
   return (
-    <main className={COLUMN_CLASS}>
+    <div className="flex min-h-dvh w-full flex-col">
       <ChatHeader />
-      {children}
-    </main>
+      <main className={cn(PAGE_CONTAINER, "flex min-w-0 flex-1 flex-col overflow-x-clip")}>
+        {children}
+      </main>
+    </div>
   );
 }
 

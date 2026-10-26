@@ -1,12 +1,10 @@
 import AccountButton from "@/features/auth/components/AccountButton";
-import Brand from "@/shared/components/commons/Brand";
-import { STICKY_BAR_CLASS } from "@/shared/constants/Ui";
+import Navbar from "@/shared/components/commons/Navbar";
 
 export default function ChatHeader() {
   return (
-    <header className={STICKY_BAR_CLASS}>
-      <Brand href="/" />
+    <Navbar>
       <AccountButton />
-    </header>
+    </Navbar>
   );
 }
